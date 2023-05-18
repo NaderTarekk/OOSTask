@@ -1,0 +1,141 @@
+Name : Nader Tarek Bahi Eldin
+ID : 41910284
+Group : S1
+
+public class CoffeeShop {
+    private String name;
+    private MenuItem[] menu;
+    private String[] orders;
+
+    public CoffeeShop(String name, MenuItem[] menu) {
+        this.name = name;
+        this.menu = menu;
+        this.orders = new String[0];
+    }
+
+    public String addOrder(String itemName) {
+        for (MenuItem item : menu) {
+            if (item.getName().equals(itemName)) {
+                String[] newOrders = new String[orders.length + 1];
+                System.arraycopy(orders, 0, newOrders, 0, orders.length);
+                newOrders[orders.length] = itemName;
+                orders = newOrders;
+                return "Order added!";
+            }
+        }
+        return "This item is currently unavailable!";
+    }
+
+    public String fulfillOrder() {
+        if (orders.length > 0) {
+            String item = orders[0];
+            String[] newOrders = new String[orders.length - 1];
+            System.arraycopy(orders, 1, newOrders, 0, orders.length - 1);
+            orders = newOrders;
+            return "The " + item + " is ready!";
+        } else {
+            return "All orders have been fulfilled!";
+        }
+    }
+
+    public String[] listOrders() {
+        return orders;
+    }
+
+    public double dueAmount() {
+        double total = 0;
+        for (String item : orders) {
+            for (MenuItem menuItem : menu) {
+                if (menuItem.getName().equals(item)) {
+                    total += menuItem.getPrice();
+                    break;
+                }
+            }
+        }
+        return total;
+    }
+
+    public String cheapestItem() {
+        double cheapestPrice = Double.MAX_VALUE;
+        String cheapestItem = "";
+        for (MenuItem item : menu) {
+            if (item.getPrice() < cheapestPrice) {
+                cheapestPrice = item.getPrice();
+                cheapestItem = item.getName();
+            }
+        }
+        return cheapestItem;
+    }
+
+    public String[] drinksOnly() {
+        ArrayList<String> drinks = new ArrayList<>();
+        for (MenuItem item : menu) {
+            if (item.getType().equals("drink")) {
+                drinks.add(item.getName());
+            }
+        }
+        return drinks.toArray(new String[0]);
+    }
+
+    public String[] foodOnly() {
+        ArrayList<String> food = new ArrayList<>();
+        for (MenuItem item : menu) {
+            if (item.getType().equals("food")) {
+                food.add(item.getName());
+            }
+        }
+        return food.toArray(new String[0]);
+    }
+}
+
+class MenuItem {
+    private String name;
+    private String type;
+    private double price;
+
+    public MenuItem(String name, String type, double price) {
+        this.name = name;
+        this.type = type;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MenuItem[] menu = {
+                new MenuItem("tuna sandwich", "food", 1.99),
+                new MenuItem("ham and cheese sandwich", "food", 2.49),
+                new MenuItem("orange juice", "drink", 0.99),
+                new MenuItem("lemonade", "drink", 0.79),
+                new MenuItem("cranberry juice", "drink", 1.29)
+        };
+        CoffeeShop tcs = new CoffeeShop("Tesha's Coffee Shop", menu);
+
+        System.out.println(tcs.addOrder("hot cocoa")); // This item is currently unavailable!
+        System.out.println(tcs.addOrder("iced tea")); // This item is currently unavailable!
+        System.out.println(tcs.addOrder("cinnamon roll")); // Order added!
+        System.out.println(tcs.addOrder("iced coffee")); // Order added!
+        System.out.println(Arrays.toString(tcs.listOrders())); // [cinnamon roll, iced coffee]
+        System.out.println(tcs.dueAmount()); // 2.17
+        System.out.println(tcs.fulfillOrder()); // The cinnamon roll is ready!
+        System.out.println(tcs.fulfillOrder()); // The iced coffee is ready!
+        System.out.println(tcs.fulfillOrder()); // All orders have been fulfilled!
+        System.out.println(Arrays.toString(tcs.listOrders())); // []
+        System.out.println(tcs.dueAmount()); // 0.0
+        System.out.println(tcs.cheapestItem()); // lemonade
+        System.out.println(Arrays.toString(tcs.drinksOnly())); // [orange juice, lemonade, cranberry juice]
+        System.out.println(Arrays.toString(tcs.foodOnly())); // [tuna sandwich, ham and cheese sandwich]
+    }
+}
